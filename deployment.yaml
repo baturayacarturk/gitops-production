@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: blog
-        image: baturayacarturk/blog-application:tagname
+        image: baturayacarturk/blog-application:1.0.0-21
         ports:
         - containerPort: 8080
         resources:
