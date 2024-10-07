@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: blog-deployment
+  namespace: my-app
 spec:
   replicas: 1
   selector:
@@ -17,13 +18,23 @@ spec:
         image: baturayacarturk/blog-application:1.0.0-21
         ports:
         - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: blog-config
         env:
-        - name: SPRING_DATASOURCE_URL
-          value: jdbc:mysql://mysql:3306/blogdb
-        - name: SPRING_DATASOURCE_USERNAME
-          value: root
-        - name: SPRING_DATASOURCE_PASSWORD
+        - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mysql-secrets
+              name: blog-secrets
               key: mysql-root-password
+        - name: ELASTICSEARCH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: blog-secrets
+              key: ELASTICSEARCH_PASSWORD
+        volumeMounts:
+        - name: file-upload
+          mountPath: /app/files
+      volumes:
+      - name: file-upload
+        emptyDir: {}
